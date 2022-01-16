@@ -20,5 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./
+        id: git_tag_check
         with:
-          milliseconds: 1000
+          TAG: ${{v1.0.0}}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: log
+        run: |
+          echo "${{ steps.git_tag_check.outputs.hasTag }}"

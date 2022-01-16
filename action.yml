@@ -1,11 +1,21 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'git-tag-check-action'
+description: 'Check git tag is exists or not'
+author: 'bbonkr'
 inputs:
-  milliseconds: # change this
+  TAG: 
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'Tag'
+  GITHUB_TOKEN:
+    required: true
+    description: 'GitHub repository Access token'
+  OWNER:
+    required: false
+    description: 'Name of repository owner'
+    default: ''
+  REPO:
+    required: false
+    description: 'Repository name'
+    default: ''
 runs:
   using: 'node12'
   main: 'dist/index.js'

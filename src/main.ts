@@ -1,18 +1,21 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {check} from './check'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const tag = core.getInput('tag')
+    core.debug(`Tag: ${tag}`)
+    const token = core.getInput('GITHUB_TOKEN')
+    const owner = core.getInput('OWNER')
+    const repo = core.getInput('REPO')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const result = check({token, tag, owner, repo})
 
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput('hasTag', result)
   } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error.message)
+    }
   }
 }
 

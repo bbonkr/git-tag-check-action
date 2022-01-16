@@ -1,29 +1,36 @@
-import {wait} from '../src/wait'
-import * as process from 'process'
-import * as cp from 'child_process'
-import * as path from 'path'
 import {expect, test} from '@jest/globals'
+import {check} from '../src/check'
 
-test('throws invalid number', async () => {
-  const input = parseInt('foo', 10)
-  await expect(wait(input)).rejects.toThrow('milliseconds not a number')
+test('throws does not provide required input', async () => {
+  expect(check({token: '', tag: ''})).rejects.toThrow('Token is required')
 })
 
-test('wait 500 ms', async () => {
-  const start = new Date()
-  await wait(500)
-  const end = new Date()
-  var delta = Math.abs(end.getTime() - start.getTime())
-  expect(delta).toBeGreaterThan(450)
+test('throws does not provide token input', async () => {
+  expect(check({token: '', tag: 'aaa'})).rejects.toThrow('Token is required')
 })
 
-// shows how the runner will run a javascript action with env / stdout protocol
-test('test runs', () => {
-  process.env['INPUT_MILLISECONDS'] = '500'
-  const np = process.execPath
-  const ip = path.join(__dirname, '..', 'lib', 'main.js')
-  const options: cp.ExecFileSyncOptions = {
-    env: process.env
-  }
-  console.log(cp.execFileSync(np, [ip], options).toString())
+test('throws does not provide tag input', async () => {
+  expect(check({token: 'aaa', tag: ''})).rejects.toThrow('Tag is required')
+})
+
+test('v1.0.0 tag should be exist', async () => {
+  const token = process.env.GH_TOKEN ?? ''
+  const owner = process.env.OWNER ?? ''
+  const repo = process.env.REPO ?? ''
+  const tag = 'v1.0.0'
+
+  const result = await check({token, tag, owner, repo})
+
+  expect(result).toEqual(true)
+})
+
+test('v100.0.0 tag should not be exist', async () => {
+  const token = process.env.GH_TOKEN ?? ''
+  const owner = process.env.OWNER ?? ''
+  const repo = process.env.REPO ?? ''
+  const tag = 'v100.0.0'
+
+  const result = await check({token, tag, owner, repo})
+
+  expect(result).toEqual(false)
 })
