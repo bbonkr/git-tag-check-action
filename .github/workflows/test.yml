@@ -22,7 +22,7 @@ jobs:
       - uses: ./
         id: git_tag_check
         with:
-          TAG: ${{v1.0.0}}
+          TAG: "v1.0.0"
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: log
         run: |
