@@ -15,6 +15,10 @@ jobs:
           npm install
       - run: |
           npm run all
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          OWNER: ${{ secrets.OWNER }}
+          REPO: ${{ secrets.REPO }}
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
