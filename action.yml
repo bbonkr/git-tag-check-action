@@ -16,6 +16,9 @@ inputs:
     required: false
     description: 'Repository name'
     default: ''
+outputs:
+  hasTag:
+    description: 'Tag is exists or not'
 runs:
   using: 'node12'
   main: 'dist/index.js'
