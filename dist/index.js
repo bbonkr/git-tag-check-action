@@ -56,14 +56,16 @@ function check(options) {
                 ref
             });
             core.debug(`status: ${status}, ref: ${data === null || data === void 0 ? void 0 : data.ref}`);
-            return data.ref === `refs/${ref}`;
+            if (data.ref === `refs/${ref}`) {
+                return tag;
+            }
         }
         catch (error) {
             const octokitError = error;
             if (octokitError) {
                 core.debug(`status: ${octokitError.status}, name: ${octokitError.name}`);
                 if (octokitError.status === 404) {
-                    return false;
+                    return '';
                 }
             }
             else {
@@ -71,10 +73,27 @@ function check(options) {
                 throw error;
             }
         }
-        return false;
+        return '';
     });
 }
 exports.check = check;
+
+
+/***/ }),
+
+/***/ 6180:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.inputs = void 0;
+exports.inputs = {
+    githubToken: 'github_token',
+    owner: 'owner',
+    repo: 'repo',
+    tag: 'tag'
+};
 
 
 /***/ }),
@@ -115,16 +134,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const check_1 = __nccwpck_require__(7657);
+const inputs_1 = __nccwpck_require__(6180);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const tag = core.getInput('tag');
-            core.debug(`Tag: ${tag}`);
-            const token = core.getInput('GITHUB_TOKEN');
-            const owner = core.getInput('OWNER');
-            const repo = core.getInput('REPO');
+            const tag = core.getInput(inputs_1.inputs.tag);
+            core.debug(`Input Tag: ${tag}`);
+            const token = core.getInput(inputs_1.inputs.githubToken);
+            const owner = core.getInput(inputs_1.inputs.owner);
+            const repo = core.getInput(inputs_1.inputs.repo);
             const result = (0, check_1.check)({ token, tag, owner, repo });
-            core.setOutput('hasTag', result);
+            core.setOutput('tag', result);
         }
         catch (error) {
             if (error instanceof Error) {
