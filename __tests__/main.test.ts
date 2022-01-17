@@ -21,7 +21,7 @@ test('v1.0.0 tag should be exist', async () => {
 
   const result = await check({token, tag, owner, repo})
 
-  expect(result).toEqual(true)
+  expect(result).toEqual(tag)
 })
 
 test('v100.0.0 tag should not be exist', async () => {
@@ -32,5 +32,5 @@ test('v100.0.0 tag should not be exist', async () => {
 
   const result = await check({token, tag, owner, repo})
 
-  expect(result).toEqual(false)
+  expect(result).toEqual('')
 })

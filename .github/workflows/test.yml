@@ -8,26 +8,38 @@ on: # rebuild any PRs and main branch changes
 
 jobs:
   build: # make sure build/ci work properly
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
     steps:
       - uses: actions/checkout@v2
+        
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 16.x        
+
       - run: |
           npm install
       - run: |
           npm run all
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           OWNER: ${{ secrets.OWNER }}
-          REPO: ${{ secrets.REPO }}
+          REPO: ${{ secrets.REPO }}               
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 16.x
+
       - uses: ./
         id: git_tag_check
         with:
-          TAG: "v1.0.0"
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          tag: "v1.0.0"
+          github_token: ${{ secrets.GH_TOKEN }}
       - name: log
         run: |
           echo "${{ steps.git_tag_check.outputs.hasTag }}"

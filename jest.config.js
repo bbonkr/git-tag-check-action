@@ -5,10 +5,7 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest'
   },
-  setupFiles: [
-    'dotenv/config'
-    // '<rootDir>/__tests__/setup.ts'
-  ],
+  setupFiles: ['dotenv/config'],
   verbose: true,
   cacheDirectory: '.test'
 }
