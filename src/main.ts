@@ -1,17 +1,20 @@
 import * as core from '@actions/core'
 import {check} from './check'
+import {inputs} from './inputs'
 
 async function run(): Promise<void> {
   try {
-    const tag = core.getInput('tag')
-    core.debug(`Tag: ${tag}`)
-    const token = core.getInput('GITHUB_TOKEN')
-    const owner = core.getInput('OWNER')
-    const repo = core.getInput('REPO')
+    const tag = core.getInput(inputs.tag)
+
+    core.debug(`Input Tag: ${tag}`)
+
+    const token = core.getInput(inputs.githubToken)
+    const owner = core.getInput(inputs.owner)
+    const repo = core.getInput(inputs.repo)
 
     const result = check({token, tag, owner, repo})
 
-    core.setOutput('hasTag', result)
+    core.setOutput('tag', result)
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message)

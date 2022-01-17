@@ -9,7 +9,7 @@ interface CheckOptions {
   repo?: string
 }
 
-export async function check(options: CheckOptions): Promise<boolean> {
+export async function check(options: CheckOptions): Promise<string> {
   const {token, tag, owner, repo} = options
 
   if (!token) {
@@ -32,13 +32,15 @@ export async function check(options: CheckOptions): Promise<boolean> {
     })
     core.debug(`status: ${status}, ref: ${data?.ref}`)
 
-    return data.ref === `refs/${ref}`
+    if (data.ref === `refs/${ref}`) {
+      return tag
+    }
   } catch (error: unknown) {
     const octokitError = error as RequestError
     if (octokitError) {
       core.debug(`status: ${octokitError.status}, name: ${octokitError.name}`)
       if (octokitError.status === 404) {
-        return false
+        return ''
       }
     } else {
       core.debug(`Unknown error`)
@@ -46,5 +48,5 @@ export async function check(options: CheckOptions): Promise<boolean> {
     }
   }
 
-  return false
+  return ''
 }

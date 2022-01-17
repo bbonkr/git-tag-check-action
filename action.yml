@@ -2,23 +2,23 @@ name: 'git-tag-check-action'
 description: 'Check git tag is exists or not'
 author: 'bbonkr'
 inputs:
-  TAG: 
+  tag: 
     required: true
     description: 'Tag'
-  GITHUB_TOKEN:
+  github_token:
     required: true
     description: 'GitHub repository Access token'
-  OWNER:
+  owner:
     required: false
     description: 'Name of repository owner'
     default: ''
-  REPO:
+  repo:
     required: false
     description: 'Repository name'
     default: ''
 outputs:
-  hasTag:
-    description: 'Tag is exists or not'
+  tag:
+    description: 'If tag is exists, returns tag. Does not exist then empty string.'
 runs:
   using: 'node12'
   main: 'dist/index.js'
