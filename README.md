@@ -13,10 +13,10 @@ steps:
   - uses: bbonkr/git-tag-check-action@v1
     id: git_tag_check
     with:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      TAG: 'v1.0.0'
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      tag: 'v1.0.0'
   - name: logging
     run: |
-      echo "hasTag=${{ steps.git_tag_check.outputs.hasTag }}"
+      echo "Found tag=${{ steps.git_tag_check.outputs.tag }}"
 ```
 
