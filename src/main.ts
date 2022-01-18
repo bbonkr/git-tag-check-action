@@ -12,7 +12,7 @@ async function run(): Promise<void> {
     const owner = core.getInput(inputs.owner)
     const repo = core.getInput(inputs.repo)
 
-    const result = check({token, tag, owner, repo})
+    const result = await check({token, tag, owner, repo})
 
     core.setOutput('tag', result)
   } catch (error) {

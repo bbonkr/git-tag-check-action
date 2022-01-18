@@ -13,6 +13,10 @@ test('throws does not provide tag input', async () => {
   expect(check({token: 'aaa', tag: ''})).rejects.toThrow('Tag is required')
 })
 
+test('throws invalid github token', async () => {
+  expect(check({token: 'aaa', tag: 'aaa'})).rejects.toThrow()
+})
+
 test('v1.0.0 tag should be exist', async () => {
   const token = process.env.GH_TOKEN ?? ''
   const owner = process.env.OWNER ?? ''

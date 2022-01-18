@@ -11,28 +11,46 @@ interface CheckOptions {
 
 export async function check(options: CheckOptions): Promise<string> {
   const {token, tag, owner, repo} = options
-
+  let errorMessage = ''
   if (!token) {
-    throw new Error('Token is required')
+    errorMessage = 'Token is required'
+    console.warn(errorMessage)
+    throw new Error(errorMessage)
   }
 
   if (!tag) {
-    throw new Error('Tag is required')
+    errorMessage = 'Tag is required'
+    console.warn(errorMessage)
+    throw new Error(errorMessage)
   }
 
-  const octokit = github.getOctokit(token)
-
-  const ref = `tags/${tag}`
-
   try {
+    const octokit = github.getOctokit(token)
+
+    const ref = `tags/${tag}`
+
+    core.debug(
+      `payload: ${JSON.stringify(
+        {
+          owner: owner || github.context.repo.owner,
+          repo: repo || github.context.repo.repo,
+          ref
+        },
+        null,
+        2
+      )}`
+    )
+
     const {status, data} = await octokit.rest.git.getRef({
       owner: owner || github.context.repo.owner,
       repo: repo || github.context.repo.repo,
       ref
     })
+
     core.debug(`status: ${status}, ref: ${data?.ref}`)
 
     if (data.ref === `refs/${ref}`) {
+      console.info(`Found tag: ${data.ref}`)
       return tag
     }
   } catch (error: unknown) {
@@ -40,12 +58,14 @@ export async function check(options: CheckOptions): Promise<string> {
     if (octokitError) {
       core.debug(`status: ${octokitError.status}, name: ${octokitError.name}`)
       if (octokitError.status === 404) {
+        console.info(`Tag ${tag} does not exist.`)
         return ''
       }
-    } else {
-      core.debug(`Unknown error`)
-      throw error
     }
+
+    core.debug(`Unknown error ${JSON.stringify(error, null, 2)}`)
+
+    throw error
   }
 
   return ''

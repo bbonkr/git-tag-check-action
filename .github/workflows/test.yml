@@ -42,4 +42,5 @@ jobs:
           github_token: ${{ secrets.GH_TOKEN }}
       - name: log
         run: |
-          echo "${{ steps.git_tag_check.outputs.hasTag }}"
+          echo "${{ steps.git_tag_check.outputs.tag }}"
+          
