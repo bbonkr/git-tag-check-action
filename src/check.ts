@@ -12,15 +12,16 @@ interface CheckOptions {
 export async function check(options: CheckOptions): Promise<string> {
   const {token, tag, owner, repo} = options
   let errorMessage = ''
+
   if (!token) {
     errorMessage = 'Token is required'
-    console.warn(errorMessage)
+    core.warning(errorMessage)
     throw new Error(errorMessage)
   }
 
   if (!tag) {
     errorMessage = 'Tag is required'
-    console.warn(errorMessage)
+    core.warning(errorMessage)
     throw new Error(errorMessage)
   }
 
@@ -50,7 +51,7 @@ export async function check(options: CheckOptions): Promise<string> {
     core.debug(`status: ${status}, ref: ${data?.ref}`)
 
     if (data.ref === `refs/${ref}`) {
-      console.info(`Found tag: ${data.ref}`)
+      core.notice(`Found tag: ${data.ref}`)
       return tag
     }
   } catch (error: unknown) {
@@ -58,12 +59,12 @@ export async function check(options: CheckOptions): Promise<string> {
     if (octokitError) {
       core.debug(`status: ${octokitError.status}, name: ${octokitError.name}`)
       if (octokitError.status === 404) {
-        console.info(`Tag ${tag} does not exist.`)
+        core.notice(`Tag ${tag} does not exist.`)
         return ''
       }
     }
 
-    core.debug(`Unknown error ${JSON.stringify(error, null, 2)}`)
+    core.error(`Unknown error ${JSON.stringify(error, null, 2)}`)
 
     throw error
   }

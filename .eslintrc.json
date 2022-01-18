@@ -14,14 +14,14 @@
       "import/named":"off",
       "no-unused-vars": "off",
       "no-console": [
-        "error",
-        { 
-          "allow": [          
-            "info",
-            "warn",
-            "error"
-          ]
-        }
+        "error"
+        // { 
+        //   "allow": [          
+        //     "info",
+        //     "warn",
+        //     "error"
+        //   ]
+        // }
       ],
       "@typescript-eslint/no-unused-vars": "error",
       "@typescript-eslint/explicit-member-accessibility": ["error", {"accessibility": "no-public"}],
