@@ -25,7 +25,7 @@ steps:
 | Name | Required | Description |
 | :--- | :------: | :---------- |
 | tag  | ✅       | Tag you want to check |
-| github_token | | GitHub Personal Access Token. It requires REPO scope. |
+| github_token | ✅ | GitHub Personal Access Token. It requires REPO scope. |
 
 ### Outputs
 
