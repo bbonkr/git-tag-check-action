@@ -41,15 +41,25 @@ const github = __importStar(__nccwpck_require__(5438));
 function check(options) {
     return __awaiter(this, void 0, void 0, function* () {
         const { token, tag, owner, repo } = options;
+        let errorMessage = '';
         if (!token) {
-            throw new Error('Token is required');
+            errorMessage = 'Token is required';
+            console.warn(errorMessage);
+            throw new Error(errorMessage);
         }
         if (!tag) {
-            throw new Error('Tag is required');
+            errorMessage = 'Tag is required';
+            console.warn(errorMessage);
+            throw new Error(errorMessage);
         }
-        const octokit = github.getOctokit(token);
-        const ref = `tags/${tag}`;
         try {
+            const octokit = github.getOctokit(token);
+            const ref = `tags/${tag}`;
+            core.debug(`payload: ${JSON.stringify({
+                owner: owner || github.context.repo.owner,
+                repo: repo || github.context.repo.repo,
+                ref
+            }, null, 2)}`);
             const { status, data } = yield octokit.rest.git.getRef({
                 owner: owner || github.context.repo.owner,
                 repo: repo || github.context.repo.repo,
@@ -57,6 +67,7 @@ function check(options) {
             });
             core.debug(`status: ${status}, ref: ${data === null || data === void 0 ? void 0 : data.ref}`);
             if (data.ref === `refs/${ref}`) {
+                console.info(`Found tag: ${data.ref}`);
                 return tag;
             }
         }
@@ -65,13 +76,12 @@ function check(options) {
             if (octokitError) {
                 core.debug(`status: ${octokitError.status}, name: ${octokitError.name}`);
                 if (octokitError.status === 404) {
+                    console.info(`Tag ${tag} does not exist.`);
                     return '';
                 }
             }
-            else {
-                core.debug(`Unknown error`);
-                throw error;
-            }
+            core.debug(`Unknown error ${JSON.stringify(error, null, 2)}`);
+            throw error;
         }
         return '';
     });
