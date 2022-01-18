@@ -44,12 +44,12 @@ function check(options) {
         let errorMessage = '';
         if (!token) {
             errorMessage = 'Token is required';
-            console.warn(errorMessage);
+            core.warning(errorMessage);
             throw new Error(errorMessage);
         }
         if (!tag) {
             errorMessage = 'Tag is required';
-            console.warn(errorMessage);
+            core.warning(errorMessage);
             throw new Error(errorMessage);
         }
         try {
@@ -67,7 +67,7 @@ function check(options) {
             });
             core.debug(`status: ${status}, ref: ${data === null || data === void 0 ? void 0 : data.ref}`);
             if (data.ref === `refs/${ref}`) {
-                console.info(`Found tag: ${data.ref}`);
+                core.notice(`Found tag: ${data.ref}`);
                 return tag;
             }
         }
@@ -76,11 +76,11 @@ function check(options) {
             if (octokitError) {
                 core.debug(`status: ${octokitError.status}, name: ${octokitError.name}`);
                 if (octokitError.status === 404) {
-                    console.info(`Tag ${tag} does not exist.`);
+                    core.notice(`Tag ${tag} does not exist.`);
                     return '';
                 }
             }
-            core.debug(`Unknown error ${JSON.stringify(error, null, 2)}`);
+            core.error(`Unknown error ${JSON.stringify(error, null, 2)}`);
             throw error;
         }
         return '';

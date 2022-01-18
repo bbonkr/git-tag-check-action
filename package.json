@@ -1,6 +1,6 @@
 {
   "name": "git-tag-check-action",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "description": "Check if the provided git tag exists.",
   "main": "lib/main.js",
@@ -20,12 +20,15 @@
   },
   "keywords": [
     "actions",
-    "node",
     "github",
     "git",
     "git tag"
   ],
-  "author": "",
+  "author": {
+    "email": "dev@bbon.kr",
+    "name": "Pon Cheol Ku (구본철)",
+    "url": "https://bbon.kr"
+  },
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.6.0",
