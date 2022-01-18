@@ -35,8 +35,8 @@ jobs:
         run: |
           npm run build
           npm run package
-        env:
-          NODE_ENV: production
+        # env:
+        #   NODE_ENV: production
 
       - name: Compare the expected and actual dist/ directories
         run: |
