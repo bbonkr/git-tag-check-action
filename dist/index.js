@@ -153,7 +153,7 @@ function run() {
             const token = core.getInput(inputs_1.inputs.githubToken);
             const owner = core.getInput(inputs_1.inputs.owner);
             const repo = core.getInput(inputs_1.inputs.repo);
-            const result = (0, check_1.check)({ token, tag, owner, repo });
+            const result = yield (0, check_1.check)({ token, tag, owner, repo });
             core.setOutput('tag', result);
         }
         catch (error) {
