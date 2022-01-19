@@ -11,8 +11,11 @@ async function run(): Promise<void> {
     const token = core.getInput(inputs.githubToken)
     const owner = core.getInput(inputs.owner)
     const repo = core.getInput(inputs.repo)
+    const prefix = core.getInput(inputs.prefix)
 
-    const result = await check({token, tag, owner, repo})
+    const tagValue = prefix ? `${prefix}${tag}` : tag
+
+    const result = await check({token, tag: tagValue, owner, repo})
 
     core.setOutput('tag', result)
   } catch (error) {

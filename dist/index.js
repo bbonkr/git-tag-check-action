@@ -102,7 +102,8 @@ exports.inputs = {
     githubToken: 'github_token',
     owner: 'owner',
     repo: 'repo',
-    tag: 'tag'
+    tag: 'tag',
+    prefix: 'prefix'
 };
 
 
@@ -153,7 +154,9 @@ function run() {
             const token = core.getInput(inputs_1.inputs.githubToken);
             const owner = core.getInput(inputs_1.inputs.owner);
             const repo = core.getInput(inputs_1.inputs.repo);
-            const result = yield (0, check_1.check)({ token, tag, owner, repo });
+            const prefix = core.getInput(inputs_1.inputs.prefix);
+            const tagValue = prefix ? `${prefix}${tag}` : tag;
+            const result = yield (0, check_1.check)({ token, tag: tagValue, owner, repo });
             core.setOutput('tag', result);
         }
         catch (error) {

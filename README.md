@@ -1,5 +1,7 @@
 # Git tag check action
 
+[![](https://img.shields.io/github/v/release/bbonkr/git-tag-check-action?display_name=tag&style=flat-square&include_prereleases)](https://github.com/bbonkr/git-tag-check-action/releases)
+
 This is an action to check if the tag you want to write exists in the remote repository.
 
 ## Usages
@@ -26,6 +28,7 @@ steps:
 | :--- | :------: | :---------- |
 | tag  | ✅       | Tag you want to check |
 | github_token | ✅ | GitHub Personal Access Token. It requires REPO scope. |
+| prefix |  | Prefix of tag name. default value is `''` (empty string). |
 
 ### Outputs
 

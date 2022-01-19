@@ -13,12 +13,16 @@ inputs:
     description: 'GitHub Personal Access Token. It requires REPO scope.'
   owner:
     required: false
-    description: 'Name of repository owner'
-    default: 'For test. You does not need this input.'
+    description: 'Name of repository owner, For test. You does not need this input.'
+    default: ''
   repo:
     required: false
-    description: 'Repository name'
-    default: 'For test. You does not need this input.'
+    description: 'Repository name; For test. You does not need this input.'
+    default: ''
+  prefix: 
+    required: false 
+    description: 'Tag prefix'
+    default: ''
 outputs:
   tag:
     description: 'If tag is exists, returns tag. Does not exist then empty string.'
