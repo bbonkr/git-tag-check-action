@@ -1,6 +1,6 @@
 {
   "name": "git-tag-check-action",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": true,
   "description": "Check if the provided git tag exists.",
   "main": "lib/main.js",

@@ -12,7 +12,7 @@ Check if the provided git tag exists.
 steps:
   - uses: actions/checkout@v2
 
-  - uses: bbonkr/git-tag-check-action@v1.0.6
+  - uses: bbonkr/git-tag-check-action@v1.0.7
     id: git_tag_check
     with:
       github_token: ${{ secrets.GITHUB_TOKEN }}

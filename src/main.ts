@@ -6,7 +6,7 @@ async function run(): Promise<void> {
   try {
     const tag = core.getInput(inputs.tag)
 
-    core.debug(`Input Tag: ${tag}`)
+    core.notice(`Let me try to find the tag by '${tag}'`)
 
     const token = core.getInput(inputs.githubToken)
     const owner = core.getInput(inputs.owner)
