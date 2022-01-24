@@ -39,6 +39,7 @@ exports.check = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 function check(options) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const { token, tag, owner, repo } = options;
         let errorMessage = '';
@@ -55,11 +56,11 @@ function check(options) {
         try {
             const octokit = github.getOctokit(token);
             const ref = `tags/${tag}`;
-            core.debug(`payload: ${JSON.stringify({
-                owner: owner || github.context.repo.owner,
-                repo: repo || github.context.repo.repo,
-                ref
-            }, null, 2)}`);
+            core.startGroup('octokit.rest.git.getRef() with');
+            core.notice(`owner: ${owner || github.context.repo.owner}`);
+            core.notice(`repo: ${repo || github.context.repo.repo}`);
+            core.notice(`ref: ${ref}`);
+            core.endGroup();
             const { status, data } = yield octokit.rest.git.getRef({
                 owner: owner || github.context.repo.owner,
                 repo: repo || github.context.repo.repo,
@@ -80,7 +81,9 @@ function check(options) {
                     return '';
                 }
             }
-            core.error(`Unknown error ${JSON.stringify(error, null, 2)}`);
+            core.startGroup('Unknown error occurred');
+            core.error((_a = error) !== null && _a !== void 0 ? _a : new Error('error does not Error type'));
+            core.endGroup();
             throw error;
         }
         return '';
@@ -150,7 +153,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const tag = core.getInput(inputs_1.inputs.tag);
-            core.debug(`Input Tag: ${tag}`);
+            core.notice(`Let me try to find the tag by '${tag}'`);
             const token = core.getInput(inputs_1.inputs.githubToken);
             const owner = core.getInput(inputs_1.inputs.owner);
             const repo = core.getInput(inputs_1.inputs.repo);

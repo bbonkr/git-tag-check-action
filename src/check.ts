@@ -30,17 +30,11 @@ export async function check(options: CheckOptions): Promise<string> {
 
     const ref = `tags/${tag}`
 
-    core.debug(
-      `payload: ${JSON.stringify(
-        {
-          owner: owner || github.context.repo.owner,
-          repo: repo || github.context.repo.repo,
-          ref
-        },
-        null,
-        2
-      )}`
-    )
+    core.startGroup('octokit.rest.git.getRef() with')
+    core.notice(`owner: ${owner || github.context.repo.owner}`)
+    core.notice(`repo: ${repo || github.context.repo.repo}`)
+    core.notice(`ref: ${ref}`)
+    core.endGroup()
 
     const {status, data} = await octokit.rest.git.getRef({
       owner: owner || github.context.repo.owner,
@@ -64,7 +58,9 @@ export async function check(options: CheckOptions): Promise<string> {
       }
     }
 
-    core.error(`Unknown error ${JSON.stringify(error, null, 2)}`)
+    core.startGroup('Unknown error occurred')
+    core.error((error as Error) ?? new Error('error does not Error type'))
+    core.endGroup()
 
     throw error
   }
