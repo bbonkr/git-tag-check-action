@@ -3,15 +3,15 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: daily
+      interval: weekly
     labels:
-      - "github-actions"
+      - "github_actions"
       - "dependencies"
 
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: daily
+      interval: weekly
     labels:
       - "npm"
       - "dependencies"      
