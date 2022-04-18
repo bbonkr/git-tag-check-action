@@ -27,7 +27,7 @@ jobs:
           OWNER: ${{ secrets.OWNER }}
           REPO: ${{ secrets.REPO }} 
       - name: get version 
-        uses: bbonkr/get-version-action@v1.0.3
+        uses: bbonkr/get-version-action@v1.0.4
         id: get_version
         with:
          project: package.json
