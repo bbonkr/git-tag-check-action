@@ -21,10 +21,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: git config
-        run: |
-          git config core.autocrlf true
-
       - name: checkout 
         uses: actions/checkout@v3
 
@@ -43,6 +39,11 @@ jobs:
           npm run package
         # env:
         #   NODE_ENV: production
+
+      - name: git config
+        run: |
+          git config core.autocrlf true
+
 
       - name: Compare the expected and actual dist/ directories
         run: |
