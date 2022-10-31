@@ -37,7 +37,7 @@
   "devDependencies": {
     "@octokit/types": "^6.34.0",
     "@types/node": "^18.11.0",
-    "@typescript-eslint/parser": "^5.40.0",
+    "@typescript-eslint/parser": "^5.41.0",
     "@vercel/ncc": "^0.34.0",
     "dotenv": "^16.0.3",
     "eslint": "^8.25.0",
