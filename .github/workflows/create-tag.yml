@@ -20,23 +20,27 @@ jobs:
 
       - run: |
           npm install
+
       - run: |
           npm run all
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           OWNER: ${{ secrets.OWNER }}
           REPO: ${{ secrets.REPO }} 
+
       - name: get version 
         uses: bbonkr/get-version-action@v1
         id: get_version
         with:
          project: package.json
+
       - name: check tag exists
         uses: ./
         id: check_tag
         with:
           tag: "v${{ steps.get_version.outputs.version }}"
-          github_token: ${{ secrets.GH_TOKEN }}          
+          github_token: ${{ secrets.GH_TOKEN }}
+
       - name: package-version-to-git-tag
         uses: pkgdeps/git-tag-action@v2
         if: ${{ steps.check_tag.outputs.tag == '' }}
@@ -46,9 +50,8 @@ jobs:
           version: ${{ steps.get_version.outputs.version }}
           git_commit_sha: ${{ github.sha }}
           git_tag_prefix: "v"
+
       - name: git tag skipped
         if: ${{ steps.check_tag.outputs.tag != '' }}
         run: |
           echo "Tag (${{ steps.check_tag.outputs.tag }}) is exists already." 
-
-        
