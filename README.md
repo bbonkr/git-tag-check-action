@@ -12,7 +12,7 @@ Check if the provided git tag exists.
 steps:
   - uses: actions/checkout@v2
 
-  - uses: bbonkr/git-tag-check-action@v1.0.10
+  - uses: bbonkr/git-tag-check-action@v1
     id: git_tag_check
     with:
       github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -24,14 +24,14 @@ steps:
 
 ### Inputs
 
-| Name | Required | Description |
-| :--- | :------: | :---------- |
-| tag  | ✅       | Tag you want to check |
-| github_token | ✅ | GitHub Personal Access Token. It requires REPO scope. |
-| prefix |  | Prefix of tag name. default value is `''` (empty string). |
+| Name         | Required | Description                                               |
+| :----------- | :------: | :-------------------------------------------------------- |
+| tag          |    ✅    | Tag you want to check                                     |
+| github_token |    ✅    | GitHub Personal Access Token. It requires REPO scope.     |
+| prefix       |          | Prefix of tag name. default value is `''` (empty string). |
 
 ### Outputs
 
-| Name | Description |
-| :--- | :---------- |
+| Name | Description                                                      |
+| :--- | :--------------------------------------------------------------- |
 | tag  | If tag is exists, returns tag. Does not exist then empty string. |
