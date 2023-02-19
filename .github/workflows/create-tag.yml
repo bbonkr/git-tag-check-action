@@ -41,14 +41,6 @@ jobs:
           tag: "v${{ steps.get_version.outputs.version }}"
           github_token: ${{ secrets.GH_TOKEN }}
 
-      - name: Create tag current
-        uses: rickstaa/action-create-tag@v1
-        if: ${{ steps.check_tag.outputs.tag == '' }}
-        with:
-          tag: "v${{ steps.get_version.outputs.version }}"
-          message: "v${{ steps.get_version.outputs.version }}"
-          commit_sha: ${{ github.sha }}
-
       - name: Create or update tag major
         uses: rickstaa/action-create-tag@v1
         if: ${{ (steps.check_tag.outputs.tag == '') && (steps.get_version.outputs.major != '') }}
@@ -75,6 +67,14 @@ jobs:
           message: latest
           commit_sha: ${{ github.sha }}
           force_push_tag: true       
+
+      - name: Create tag current
+        uses: rickstaa/action-create-tag@v1
+        if: ${{ steps.check_tag.outputs.tag == '' }}
+        with:
+          tag: "v${{ steps.get_version.outputs.version }}"
+          message: "v${{ steps.get_version.outputs.version }}"
+          commit_sha: ${{ github.sha }}
 
       - name: git tag skipped
         if: ${{ steps.check_tag.outputs.tag != '' }}
