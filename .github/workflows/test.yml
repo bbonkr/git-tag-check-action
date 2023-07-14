@@ -40,8 +40,8 @@ jobs:
           tag: 'v1.0.0'
           github_token: ${{ secrets.GH_TOKEN }}
           major_labels: 'major'
-          minor_labels: 'feature, minor'
-          patch_labels: 'bug, dependencies, patch'
+          minor_labels: 'feature, enhancement'
+          patch_labels: 'bug, dependencies'
           next_version_prefix: 'v'
       - name: log
         run: |

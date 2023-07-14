@@ -42,7 +42,7 @@ jobs:
           tag: 'v${{ steps.get_version.outputs.version }}'
           github_token: ${{ secrets.GH_TOKEN }}
           major_labels: 'major'
-          minor_labels: 'feature'
+          minor_labels: 'feature, enhancement'
           patch_labels: 'bug, dependencies'
           next_version_prefix: 'v'
 
