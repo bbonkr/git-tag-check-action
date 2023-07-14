@@ -24,14 +24,28 @@ steps:
 
 ### Inputs
 
-| Name         | Required | Description                                               |
-| :----------- | :------: | :-------------------------------------------------------- |
-| tag          |    ✅    | Tag you want to check                                     |
-| github_token |    ✅    | GitHub Personal Access Token. It requires REPO scope.     |
-| prefix       |          | Prefix of tag name. default value is `''` (empty string). |
+| Name                | Required | Description                                                              |
+| :------------------ | :------: | :----------------------------------------------------------------------- |
+| tag                 |    ✅    | Tag you want to check                                                    |
+| github_token        |    ✅    | GitHub Personal Access Token. It requires REPO scope.                    |
+| prefix              |          | Prefix of tag name. default value is `''` (empty string).                |
+| major_labels        |          | A comma-separated list of label names to increment the major version by. |
+| minor_labels        |          | A comma-separated list of label names to increment the minor version by. |
+| patch_labels        |          | A comma-separated list of label names to increment the patch version by. |
+| next_version_prefix |          | Next version prefix                                                      |
 
 ### Outputs
 
-| Name | Description                                                      |
-| :--- | :--------------------------------------------------------------- |
-| tag  | If tag is exists, returns tag. Does not exist then empty string. |
+| Name               | Description                                                      |
+| :----------------- | :--------------------------------------------------------------- |
+| tag                | If tag is exists, returns tag. Does not exist then empty string. |
+| latest_version     | Latest version of git tag                                        |
+| next_version       | Recommended next version name                                    |
+| next_version_major | Major version of Recommended next version                        |
+| next_version_minor | Minor version of Recommended next version                        |
+| next_version_patch | Patch version of Recommended next version                        |
+
+- next_version is `1.0.0` if latest version could not find.
+- latest_version is latest git tag name of git tags SEMVER[^semver] formatted.
+
+[^semver]: https://semver.org/

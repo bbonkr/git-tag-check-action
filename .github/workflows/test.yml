@@ -4,18 +4,17 @@ on: # rebuild any PRs and main branch changes
   push:
     branches:
       - main
-      - 'releases/*'
 
 jobs:
   build: # make sure build/ci work properly
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        
+
       - name: Set Node.js 16.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x        
+          node-version: 16.x
 
       - run: |
           npm install
@@ -24,7 +23,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           OWNER: ${{ secrets.OWNER }}
-          REPO: ${{ secrets.REPO }}               
+          REPO: ${{ secrets.REPO }}
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
@@ -38,9 +37,17 @@ jobs:
       - uses: ./
         id: git_tag_check
         with:
-          tag: "v1.0.0"
+          tag: 'v1.0.0'
           github_token: ${{ secrets.GH_TOKEN }}
+          major_labels: 'major'
+          minor_labels: 'feature, minor'
+          patch_labels: 'bug, dependencies, patch'
+          next_version_prefix: 'v'
       - name: log
         run: |
-          echo "${{ steps.git_tag_check.outputs.tag }}"
-          
+          echo "tag=${{ steps.git_tag_check.outputs.tag }}"
+          echo "latest_version=${{ steps.git_tag_check.outputs.latest_version }}"
+          echo "next_version=${{ steps.git_tag_check.outputs.next_version }}"
+          echo "next_version_major=${{ steps.git_tag_check.outputs.next_version_major }}"
+          echo "next_version_minor=${{ steps.git_tag_check.outputs.next_version_minor }}"
+          echo "next_version_patch=${{ steps.git_tag_check.outputs.next_version_patch }}"

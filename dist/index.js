@@ -61,20 +61,23 @@ function check(options) {
             const octokit = github.getOctokit(token);
             const ref = `tags/${tag}`;
             core.startGroup('octokit.rest.git.getRef() with');
-            core.notice(`owner: ${owner || github.context.repo.owner}`);
-            core.notice(`repo: ${repo || github.context.repo.repo}`);
+            core.notice(`owner: ${owner}`);
+            core.notice(`repo: ${repo}`);
             core.notice(`ref: ${ref}`);
             core.endGroup();
             const { status, data } = yield octokit.rest.git.getRef({
-                owner: owner || github.context.repo.owner,
-                repo: repo || github.context.repo.repo,
+                owner,
+                repo,
                 ref
             });
             core.debug(`status: ${status}, ref: ${data === null || data === void 0 ? void 0 : data.ref}`);
             if (data.ref === `refs/${ref}`) {
                 core.notice(`Found tag: ${data.ref}`);
-                return tag;
+                return {
+                    tag
+                };
             }
+            // next version
         }
         catch (error) {
             const octokitError = error;
@@ -82,7 +85,7 @@ function check(options) {
                 core.debug(`status: ${octokitError.status}, name: ${octokitError.name}`);
                 if (octokitError.status === 404) {
                     core.notice(`Tag ${tag} does not exist.`);
-                    return '';
+                    return { tag: '' };
                 }
             }
             core.startGroup('Unknown error occurred');
@@ -90,10 +93,46 @@ function check(options) {
             core.endGroup();
             throw error;
         }
-        return '';
+        return { tag: '' };
     });
 }
 exports.check = check;
+
+
+/***/ }),
+
+/***/ 2307:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getPullRequestNumber = void 0;
+/**
+ * Get PR
+ *
+ * @param gitHubRef
+ * @returns
+ */
+const getPullRequestNumber = (gitHubRef) => {
+    if (gitHubRef) {
+        if (gitHubRef.startsWith('refs/pull/')) {
+            // github.ref: refs/pull/<pr_number>/merge
+            const prNumberStringValue = gitHubRef
+                .split('/')
+                .filter((_, index) => index === 2)
+                .find((_, index) => index === 0);
+            if (prNumberStringValue) {
+                const prNumber = parseInt(prNumberStringValue, 10);
+                if (typeof prNumber === 'number' && !isNaN(prNumber)) {
+                    return prNumber;
+                }
+            }
+        }
+    }
+    return -1;
+};
+exports.getPullRequestNumber = getPullRequestNumber;
 
 
 /***/ }),
@@ -110,8 +149,129 @@ exports.inputs = {
     owner: 'owner',
     repo: 'repo',
     tag: 'tag',
-    prefix: 'prefix'
+    prefix: 'prefix',
+    majorLabels: 'major_labels',
+    minorLabels: 'minor_labels',
+    patchLabels: 'patch_labels',
+    nextVersionTagPrevix: 'next_version_prefix'
 };
+
+
+/***/ }),
+
+/***/ 1968:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getLatestVersionFromGitTags = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
+const version_1 = __nccwpck_require__(8217);
+/**
+ * Get latest version from git tags
+ *
+ * @param options
+ * @returns
+ */
+function getLatestVersionFromGitTags(options) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const { token, owner, repo } = options;
+        let errorMessage = '';
+        if (!token) {
+            errorMessage = 'Token is required';
+            core.warning(errorMessage);
+            throw new Error(errorMessage);
+        }
+        try {
+            const octokit = github.getOctokit(token);
+            const { status, data } = yield octokit.rest.git.listMatchingRefs({
+                owner,
+                repo,
+                ref: 'tags'
+            });
+            core.debug(`getLatestVersionFromGitTags::status: ${status}, count: ${data.length}`);
+            const tags = data.map(x => {
+                if (x.ref.startsWith('refs/tags/')) {
+                    // ref:= refs/tags/v1.0.0
+                    const tagName = x.ref.split('/').find((_, index) => index === 2);
+                    if (tagName) {
+                        try {
+                            return (0, version_1.parseVersion)(tagName);
+                        }
+                        catch (_a) {
+                            return undefined;
+                        }
+                    }
+                    else {
+                        return undefined;
+                    }
+                }
+                return undefined;
+            });
+            const latestVersion = tags
+                .filter(tag => typeof tag !== 'undefined')
+                .slice()
+                .sort(version_1.sortDesc)
+                .find((_, index) => index === 0);
+            if (typeof latestVersion !== 'undefined') {
+                return latestVersion;
+            }
+            // next version
+        }
+        catch (error) {
+            const octokitError = error;
+            if (octokitError) {
+                core.debug(`status: ${octokitError.status}, name: ${octokitError.name}`);
+                if (octokitError.status === 404) {
+                    core.notice(`Tags not found.`);
+                    return undefined;
+                }
+            }
+            core.startGroup('Unknown error occurred');
+            core.error((_a = error) !== null && _a !== void 0 ? _a : new Error('error does not Error type'));
+            core.endGroup();
+            throw error;
+        }
+        core.notice(`Tags not found.`);
+        return undefined;
+    });
+}
+exports.getLatestVersionFromGitTags = getLatestVersionFromGitTags;
 
 
 /***/ }),
@@ -155,20 +315,58 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
 const check_1 = __nccwpck_require__(7657);
 const inputs_1 = __nccwpck_require__(6180);
+const latest_version_1 = __nccwpck_require__(1968);
+const next_version_1 = __nccwpck_require__(9020);
+const outputs_1 = __nccwpck_require__(5314);
+const version_1 = __nccwpck_require__(8217);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const tag = core.getInput(inputs_1.inputs.tag);
             core.notice(`Let me try to find the tag by '${tag}'`);
             const token = core.getInput(inputs_1.inputs.githubToken);
-            const owner = core.getInput(inputs_1.inputs.owner);
-            const repo = core.getInput(inputs_1.inputs.repo);
+            let owner = core.getInput(inputs_1.inputs.owner);
+            let repo = core.getInput(inputs_1.inputs.repo);
             const prefix = core.getInput(inputs_1.inputs.prefix);
+            const majorLabelsInput = core.getInput(inputs_1.inputs.majorLabels);
+            const minorLabelsInput = core.getInput(inputs_1.inputs.minorLabels);
+            const patchLabelsInput = core.getInput(inputs_1.inputs.patchLabels);
+            const nextVersionPrefix = core.getInput(inputs_1.inputs.nextVersionTagPrevix);
+            const majorLabels = majorLabelsInput === null || majorLabelsInput === void 0 ? void 0 : majorLabelsInput.split(',').map(x => x === null || x === void 0 ? void 0 : x.trim().toLowerCase()).filter(Boolean);
+            const minorLabels = minorLabelsInput === null || minorLabelsInput === void 0 ? void 0 : minorLabelsInput.split(',').map(x => x === null || x === void 0 ? void 0 : x.trim().toLowerCase()).filter(Boolean);
+            const patchLabels = patchLabelsInput === null || patchLabelsInput === void 0 ? void 0 : patchLabelsInput.split(',').map(x => x === null || x === void 0 ? void 0 : x.trim().toLowerCase()).filter(Boolean);
             const tagValue = prefix ? `${prefix}${tag}` : tag;
+            if (!owner) {
+                owner = github.context.repo.owner;
+            }
+            if (!repo) {
+                repo = github.context.repo.repo;
+            }
             const result = yield (0, check_1.check)({ token, tag: tagValue, owner, repo });
-            core.setOutput('tag', result);
+            const latestVersion = yield (0, latest_version_1.getLatestVersionFromGitTags)({
+                token,
+                owner,
+                repo
+            });
+            const nextVersion = yield (0, next_version_1.getNextVersion)({
+                token,
+                owner,
+                repo,
+                ref: github.context.ref,
+                latestVersion,
+                majorLabels,
+                minorLabels,
+                patchLabels
+            });
+            core.setOutput(outputs_1.outputs.tag, result.tag);
+            core.setOutput(outputs_1.outputs.latestVersion, latestVersion ? (0, version_1.printVersion)(latestVersion) : '');
+            core.setOutput(outputs_1.outputs.nextVersion, nextVersion ? (0, version_1.printVersion)(nextVersion, nextVersionPrefix) : '');
+            core.setOutput(outputs_1.outputs.nextVersionMajor, nextVersion ? `${nextVersion.major}` : '');
+            core.setOutput(outputs_1.outputs.nextVersionMinor, nextVersion ? `${nextVersion.minor}` : '');
+            core.setOutput(outputs_1.outputs.nextVersionPatch, nextVersion ? `${nextVersion.patch}` : '');
         }
         catch (error) {
             if (error instanceof Error) {
@@ -178,6 +376,242 @@ function run() {
     });
 }
 run();
+
+
+/***/ }),
+
+/***/ 9020:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getNextVersion = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
+const get_pull_request_number_1 = __nccwpck_require__(2307);
+const containsInTargets = (sourceLabels, targetLabels) => {
+    let result = false;
+    for (const label of sourceLabels) {
+        if (label && targetLabels.includes(label)) {
+            result = true;
+            break;
+        }
+    }
+    return result;
+};
+function getNextVersion(options) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const { token, owner, repo, ref, majorLabels, minorLabels, patchLabels, latestVersion } = options;
+        let errorMessage = '';
+        if (!token) {
+            errorMessage = 'Token is required';
+            core.warning(errorMessage);
+            throw new Error(errorMessage);
+        }
+        const prNumber = (0, get_pull_request_number_1.getPullRequestNumber)(ref);
+        try {
+            const octokit = github.getOctokit(token);
+            if (!latestVersion) {
+                return {
+                    major: 1,
+                    minor: 0,
+                    patch: 0
+                };
+            }
+            if (prNumber > 0) {
+                const { status, data } = yield octokit.rest.pulls.get({
+                    owner,
+                    repo,
+                    pull_number: prNumber
+                });
+                core.debug(`status: ${status}, ref: ${data.number}, url: ${data.url}`);
+                const labels = data.labels
+                    .filter(label => Boolean(label.name))
+                    .map(label => label.name);
+                let nextVersion;
+                if (containsInTargets(labels, majorLabels)) {
+                    nextVersion = {
+                        major: latestVersion.major + 1,
+                        minor: 0,
+                        patch: 0
+                    };
+                }
+                else if (containsInTargets(labels, minorLabels)) {
+                    nextVersion = Object.assign(Object.assign({}, latestVersion), { minor: latestVersion.minor + 1, patch: 0 });
+                }
+                else if (containsInTargets(labels, patchLabels)) {
+                    nextVersion = Object.assign(Object.assign({}, latestVersion), { patch: latestVersion.minor + 1 });
+                }
+                else {
+                    nextVersion = undefined;
+                }
+                return nextVersion;
+            }
+            // next version
+        }
+        catch (error) {
+            const octokitError = error;
+            if (octokitError) {
+                core.debug(`status: ${octokitError.status}, name: ${octokitError.name}`);
+                if (octokitError.status === 404) {
+                    core.notice(`PR not found. pr=${prNumber}.`);
+                    return undefined;
+                }
+            }
+            core.startGroup('Unknown error occurred');
+            core.error((_a = error) !== null && _a !== void 0 ? _a : new Error('error does not Error type'));
+            core.endGroup();
+            throw error;
+        }
+        core.notice(`PR not found. pr=${prNumber}.`);
+        return undefined;
+    });
+}
+exports.getNextVersion = getNextVersion;
+
+
+/***/ }),
+
+/***/ 5314:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.outputs = void 0;
+exports.outputs = {
+    tag: 'tag',
+    latestVersion: 'latest_version',
+    nextVersion: 'next_version',
+    nextVersionMajor: 'next_version_major',
+    nextVersionMinor: 'next_version_minor',
+    nextVersionPatch: 'next_version_patch'
+};
+
+
+/***/ }),
+
+/***/ 8217:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.printVersion = exports.sortAsc = exports.sortDesc = exports.parseVersion = void 0;
+const parseVersion = (v) => {
+    // https://semver.org/
+    // https://en.wikipedia.org/wiki/Software_versioning
+    const rexVersion = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/gi;
+    if (!rexVersion.test(v)) {
+        throw new Error('Invalid string as version');
+    }
+    const tokens = v.split(rexVersion);
+    if (tokens.length > 3) {
+        return {
+            major: parseInt(tokens[1], 10),
+            minor: parseInt(tokens[2], 10),
+            patch: parseInt(tokens[3], 10),
+            preRelease: tokens.length > 3 ? tokens[4] : undefined,
+            build: tokens.length > 4 ? tokens[5] : undefined
+        };
+    }
+    else {
+        throw new Error('Invalid string as version');
+    }
+};
+exports.parseVersion = parseVersion;
+const sortDesc = (a, b) => {
+    if (!a || !b) {
+        return 1;
+    }
+    else {
+        if (a.major > b.major) {
+            return -1;
+        }
+        else {
+            if (a.minor > b.minor) {
+                return -1;
+            }
+            else {
+                if (a.patch > b.patch) {
+                    return -1;
+                }
+                else {
+                    return 1;
+                }
+            }
+        }
+    }
+};
+exports.sortDesc = sortDesc;
+const sortAsc = (a, b) => {
+    if (!a || !b) {
+        return 1;
+    }
+    else {
+        if (a.major > b.major) {
+            return 1;
+        }
+        else {
+            if (a.minor > b.minor) {
+                return 1;
+            }
+            else {
+                if (a.patch > b.patch) {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
+            }
+        }
+    }
+};
+exports.sortAsc = sortAsc;
+const printVersion = (version, prefix) => {
+    var _a;
+    const versionTokens = [
+        `${version.major}`,
+        `${version.minor}`,
+        `${version.patch}`
+    ];
+    return `${(_a = prefix === null || prefix === void 0 ? void 0 : prefix.trim()) !== null && _a !== void 0 ? _a : ''}${versionTokens.filter(Boolean).join('.')}${version.preRelease ? `-${version.preRelease.trim()}` : ''}${version.build ? `+${version.build.trim()}` : ''}`;
+};
+exports.printVersion = printVersion;
 
 
 /***/ }),

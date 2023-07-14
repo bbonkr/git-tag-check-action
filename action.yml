@@ -23,9 +23,33 @@ inputs:
     required: false 
     description: 'Tag prefix'
     default: ''
+  major_labels:
+    required: false
+    description: 'A comma-separated list of label names to increment the major version by.'
+  minor_labels:
+    required: false
+    description: 'A comma-separated list of label names to increment the minor version by.'
+  patch_labels:
+    required: false
+    description: 'A comma-separated list of label names to increment the patch version by.'
+  next_version_prefix:
+    required: false
+    description: 'Next version prefix'
+    default: ''
+
 outputs:
   tag:
     description: 'If tag is exists, returns tag. Does not exist then empty string.'
+  latest_version:
+    description: 'Latest version of git tag'
+  next_version:
+    description: 'Recommended next version name'
+  next_version_major:
+    description: 'Major version of Recommended next version'
+  next_version_minor:
+    description: 'Minor version of Recommended next version'
+  next_version_patch:
+    description: 'Patch version of Recommended next version'
 runs:
   using: 'node12'
   main: 'dist/index.js'
