@@ -1,4 +1,4 @@
-name-template: 'v$RESOLVED_VERSION 🌈'
+name-template: 'v$RESOLVED_VERSION ⭐️'
 tag-template: 'v$RESOLVED_VERSION'
 categories:
   - title: '🚀 Features'
@@ -17,6 +17,7 @@ categories:
       - 'documentation'
       - 'modifications'
       - 'refactoring'
+      - 'dependencies'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 exclude-labels:
   - 'skip-changelog'
