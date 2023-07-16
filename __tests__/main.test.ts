@@ -2,19 +2,27 @@ import {expect, test} from '@jest/globals'
 import {check} from '../src/check'
 
 test('throws does not provide required input', async () => {
-  expect(check({token: '', tag: ''})).rejects.toThrow('Token is required')
+  expect(check({token: '', tag: '', owner: '', repo: ''})).rejects.toThrow(
+    'Token is required'
+  )
 })
 
 test('throws does not provide token input', async () => {
-  expect(check({token: '', tag: 'aaa'})).rejects.toThrow('Token is required')
+  expect(check({token: '', tag: 'aaa', owner: '', repo: ''})).rejects.toThrow(
+    'Token is required'
+  )
 })
 
 test('throws does not provide tag input', async () => {
-  expect(check({token: 'aaa', tag: ''})).rejects.toThrow('Tag is required')
+  expect(check({token: 'aaa', tag: '', owner: '', repo: ''})).rejects.toThrow(
+    'Tag is required'
+  )
 })
 
 test('throws invalid github token', async () => {
-  expect(check({token: 'aaa', tag: 'aaa'})).rejects.toThrow()
+  expect(
+    check({token: 'aaa', tag: 'aaa', owner: '', repo: ''})
+  ).rejects.toThrow()
 })
 
 test('v1.0.0 tag should be exist', async () => {

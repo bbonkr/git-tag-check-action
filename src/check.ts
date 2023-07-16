@@ -1,12 +1,12 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import {RequestError} from '@octokit/types'
+import {RequestError} from './request-error'
 
 interface CheckOptions {
   token: string
   tag: string
-  owner?: string
-  repo?: string
+  owner: string
+  repo: string
 }
 
 export async function check(options: CheckOptions): Promise<string> {
@@ -31,14 +31,14 @@ export async function check(options: CheckOptions): Promise<string> {
     const ref = `tags/${tag}`
 
     core.startGroup('octokit.rest.git.getRef() with')
-    core.notice(`owner: ${owner || github.context.repo.owner}`)
-    core.notice(`repo: ${repo || github.context.repo.repo}`)
+    core.notice(`owner: ${owner}`)
+    core.notice(`repo: ${repo}`)
     core.notice(`ref: ${ref}`)
     core.endGroup()
 
     const {status, data} = await octokit.rest.git.getRef({
-      owner: owner || github.context.repo.owner,
-      repo: repo || github.context.repo.repo,
+      owner,
+      repo,
       ref
     })
 
