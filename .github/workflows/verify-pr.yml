@@ -17,20 +17,28 @@ jobs:
         with:
           node-version: 18.x
 
-      - run: |
+      - name: Install dependencies
+        run: |
           npm install
-      - run: |
-          npm run all
+
+      - name: Test
+        run: |
+          npm run test --if-present
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           OWNER: ${{ secrets.OWNER }}
           REPO: ${{ secrets.REPO }}
+
+      - name: npm all script
+        run: |
+          npm run all
 
       - uses: ./
         id: git_tag_check
         with:
           tag: 'v1.0.0'
           github_token: ${{ secrets.GH_TOKEN }}
+
       - name: log
         run: |
           echo "${{ steps.git_tag_check.outputs.tag }}"

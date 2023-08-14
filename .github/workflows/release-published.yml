@@ -1,0 +1,67 @@
+name: Release published
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Test
+        run: |
+          npm run test --if-present
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          OWNER: ${{ secrets.OWNER }}
+          REPO: ${{ secrets.REPO }}
+
+      - name: npm all script
+        run: |
+          npm run all
+
+      - uses: ./
+        id: git_tag_check
+        with:
+          tag: ${{ github.ref_name }}
+          github_token: ${{ github.token }}
+
+      - name: log
+        run: |
+          echo "tag=${{ steps.git_tag_check.outputs.tag }}"
+          echo "version=${{ steps.git_tag_check.outputs.version }}"
+          echo "version=${{ steps.git_tag_check.outputs.major }}"
+          echo "version=${{ steps.git_tag_check.outputs.minor }}"
+          echo "version=${{ steps.git_tag_check.outputs.patch }}"
+
+      - name: Create or update tag major
+        uses: rickstaa/action-create-tag@v1
+        if: ${{ (steps.git_tag_check.outputs.version != '') && (steps.git_tag_check.outputs.major != '') }}
+        with:
+          tag: 'v${{ steps.git_tag_check.outputs.major }}'
+          message: 'Overwrite v${{ steps.git_tag_check.outputs.major }}'
+          commit_sha: ${{ github.sha }}
+          force_push_tag: true
+
+      - name: Create or update tag major.minor
+        uses: rickstaa/action-create-tag@v1
+        if: ${{ (steps.git_tag_check.outputs.version != '') && (steps.git_tag_check.outputs.next_version_major != '') && (steps.git_tag_check.outputs.minor != '') }}
+        with:
+          tag: 'v${{ steps.git_tag_check.outputs.major }}.${{ steps.git_tag_check.outputs.minor }}'
+          message: 'Overwrite v${{ steps.git_tag_check.outputs.major }}.${{ steps.git_tag_check.outputs.minor }}'
+          commit_sha: ${{ github.sha }}
+          force_push_tag: true

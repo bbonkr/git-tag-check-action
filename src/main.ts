@@ -2,6 +2,8 @@ import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {check} from './check'
 import {inputs} from './inputs'
+import {Version, parseVersion} from './version'
+import {outputs} from './outputs'
 
 async function run(): Promise<void> {
   try {
@@ -26,7 +28,20 @@ async function run(): Promise<void> {
 
     const result = await check({token, tag: tagValue, owner, repo})
 
-    core.setOutput('tag', result)
+    let version: Version | undefined
+    try {
+      version = parseVersion(result)
+    } catch {
+      version = undefined
+    }
+
+    core.setOutput(outputs.tag, result)
+    core.setOutput(outputs.version, result)
+    core.setOutput(outputs.major, version?.major ?? '')
+    core.setOutput(outputs.minor, version?.minor ?? '')
+    core.setOutput(outputs.patch, version?.preRelease ?? '')
+    core.setOutput(outputs.prerelease, version?.preRelease ?? '')
+    core.setOutput(outputs.build, version?.build ?? '')
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message)
