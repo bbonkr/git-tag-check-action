@@ -158,7 +158,10 @@ const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const check_1 = __nccwpck_require__(7657);
 const inputs_1 = __nccwpck_require__(6180);
+const version_1 = __nccwpck_require__(8217);
+const outputs_1 = __nccwpck_require__(5314);
 function run() {
+    var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const tag = core.getInput(inputs_1.inputs.tag);
@@ -175,7 +178,20 @@ function run() {
             }
             const tagValue = prefix ? `${prefix}${tag}` : tag;
             const result = yield (0, check_1.check)({ token, tag: tagValue, owner, repo });
-            core.setOutput('tag', result);
+            let version;
+            try {
+                version = (0, version_1.parseVersion)(result);
+            }
+            catch (_f) {
+                version = undefined;
+            }
+            core.setOutput(outputs_1.outputs.tag, result);
+            core.setOutput(outputs_1.outputs.version, result);
+            core.setOutput(outputs_1.outputs.major, (_a = version === null || version === void 0 ? void 0 : version.major) !== null && _a !== void 0 ? _a : '');
+            core.setOutput(outputs_1.outputs.minor, (_b = version === null || version === void 0 ? void 0 : version.minor) !== null && _b !== void 0 ? _b : '');
+            core.setOutput(outputs_1.outputs.patch, (_c = version === null || version === void 0 ? void 0 : version.preRelease) !== null && _c !== void 0 ? _c : '');
+            core.setOutput(outputs_1.outputs.prerelease, (_d = version === null || version === void 0 ? void 0 : version.preRelease) !== null && _d !== void 0 ? _d : '');
+            core.setOutput(outputs_1.outputs.build, (_e = version === null || version === void 0 ? void 0 : version.build) !== null && _e !== void 0 ? _e : '');
         }
         catch (error) {
             if (error instanceof Error) {
@@ -185,6 +201,60 @@ function run() {
     });
 }
 run();
+
+
+/***/ }),
+
+/***/ 5314:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.outputs = void 0;
+exports.outputs = {
+    tag: 'tag',
+    version: 'version',
+    major: 'major',
+    minor: 'minor',
+    patch: 'patch',
+    prerelease: 'prerelease',
+    build: 'build'
+};
+
+
+/***/ }),
+
+/***/ 8217:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.parseVersion = void 0;
+const parseVersion = (v) => {
+    // https://semver.org/
+    // https://en.wikipedia.org/wiki/Software_versioning
+    const rexVersion = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/gi;
+    if (!rexVersion.test(v)) {
+        throw new Error('Invalid string as version');
+    }
+    const tokens = v.split(rexVersion);
+    //   console.info(tokens)
+    if (tokens.length > 3) {
+        return {
+            major: parseInt(tokens[1], 10),
+            minor: parseInt(tokens[2], 10),
+            patch: parseInt(tokens[3], 10),
+            preRelease: tokens.length > 3 ? tokens[4] : undefined,
+            build: tokens.length > 4 ? tokens[5] : undefined
+        };
+    }
+    else {
+        throw new Error('Invalid string as version');
+    }
+};
+exports.parseVersion = parseVersion;
 
 
 /***/ }),
