@@ -26,6 +26,18 @@ inputs:
 outputs:
   tag:
     description: 'If tag is exists, returns tag. Does not exist then empty string.'
+  version:
+    description: 'Version string. Same as tag.'
+  major:
+    description: 'Major number of version'
+  minor: 
+    description: 'Minor number of version'
+  patch:
+    description: 'Patch number of version'
+  prerelease:
+    description: 'Pre-release value of version'
+  build:
+    description: 'Build value of version'
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'

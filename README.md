@@ -32,6 +32,12 @@ steps:
 
 ### Outputs
 
-| Name | Description                                                      |
-| :--- | :--------------------------------------------------------------- |
-| tag  | If tag is exists, returns tag. Does not exist then empty string. |
+| Name       | Description                                                      |
+| :--------- | :--------------------------------------------------------------- |
+| tag        | If tag is exists, returns tag. Does not exist then empty string. |
+| version    | Version string. Same as tag.                                     |
+| major      | Major number of version                                          |
+| minor      | Minor number of version                                          |
+| patch      | Patch number of version                                          |
+| prerelease | Prerelease value of version                                      |
+| build      | Build value of version                                           |
