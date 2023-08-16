@@ -59,7 +59,7 @@ jobs:
 
       - name: Create or update tag major.minor
         uses: rickstaa/action-create-tag@v1
-        if: ${{ (steps.git_tag_check.outputs.version != '') && (steps.git_tag_check.outputs.next_version_major != '') && (steps.git_tag_check.outputs.minor != '') }}
+        if: ${{ (steps.git_tag_check.outputs.version != '') && (steps.git_tag_check.outputs.major != '') && (steps.git_tag_check.outputs.minor != '') }}
         with:
           tag: 'v${{ steps.git_tag_check.outputs.major }}.${{ steps.git_tag_check.outputs.minor }}'
           message: 'Overwrite v${{ steps.git_tag_check.outputs.major }}.${{ steps.git_tag_check.outputs.minor }}'
