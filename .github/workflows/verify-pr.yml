@@ -41,4 +41,8 @@ jobs:
 
       - name: log
         run: |
-          echo "${{ steps.git_tag_check.outputs.tag }}"
+          echo "tag=${{ steps.git_tag_check.outputs.tag }}"
+          echo "version=${{ steps.git_tag_check.outputs.version }}"
+          echo "version=${{ steps.git_tag_check.outputs.major }}"
+          echo "version=${{ steps.git_tag_check.outputs.minor }}"
+          echo "version=${{ steps.git_tag_check.outputs.patch }}"
