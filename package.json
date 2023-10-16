@@ -37,7 +37,7 @@
   "devDependencies": {
     "@octokit/plugin-rest-endpoint-methods": "^9.0.0",
     "@octokit/types": "^11.1.0",
-    "@types/node": "^20.4.2",
+    "@types/node": "^20.8.6",
     "@typescript-eslint/parser": "^5.62.0",
     "@vercel/ncc": "^0.36.1",
     "dotenv": "^16.3.1",
