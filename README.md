@@ -10,7 +10,7 @@ Check if the provided git tag exists.
 
 ```yaml
 steps:
-  - uses: actions/checkout@v2
+  - uses: actions/checkout@v4
 
   - uses: bbonkr/git-tag-check-action@v1
     id: git_tag_check

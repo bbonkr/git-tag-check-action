@@ -1,43 +1,43 @@
-name: 'git-tag-check-action'
-description: 'Check git tag is exists or not'
-author: 'bbonkr'
+name: "git-tag-check-action"
+description: "Check git tag is exists or not"
+author: "bbonkr"
 branding:
-  color: purple 
+  color: purple
   icon: check
 inputs:
-  tag: 
+  tag:
     required: true
-    description: 'Tag'
+    description: "Tag"
   github_token:
     required: true
-    description: 'GitHub Personal Access Token. It requires REPO scope.'
+    description: "GitHub Personal Access Token. It requires REPO scope."
   owner:
     required: false
-    description: 'Name of repository owner, For test. You does not need this input.'
-    default: ''
+    description: "Name of repository owner, For test. You does not need this input."
+    default: ""
   repo:
     required: false
-    description: 'Repository name; For test. You does not need this input.'
-    default: ''
-  prefix: 
-    required: false 
-    description: 'Tag prefix'
-    default: ''
+    description: "Repository name; For test. You does not need this input."
+    default: ""
+  prefix:
+    required: false
+    description: "Tag prefix"
+    default: ""
 outputs:
   tag:
-    description: 'If tag is exists, returns tag. Does not exist then empty string.'
+    description: "If tag is exists, returns tag. Does not exist then empty string."
   version:
-    description: 'Version string. Same as tag.'
+    description: "Version string. Same as tag."
   major:
-    description: 'Major number of version'
-  minor: 
-    description: 'Minor number of version'
+    description: "Major number of version"
+  minor:
+    description: "Minor number of version"
   patch:
-    description: 'Patch number of version'
+    description: "Patch number of version"
   prerelease:
-    description: 'Pre-release value of version'
+    description: "Pre-release value of version"
   build:
-    description: 'Build value of version'
+    description: "Build value of version"
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
+  using: "node20"
+  main: "dist/index.js"
