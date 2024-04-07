@@ -1,8 +1,8 @@
-name: 'PR completed'
+name: "PR completed"
 
 on: # rebuild any PRs and main branch changes
   pull_request:
-    types: ['closed']
+    types: ["closed"]
 
 permissions:
   contents: write
@@ -10,7 +10,7 @@ permissions:
 
 env:
   MAIN_BRANCH_NAME: main
-  PROJECT_NAME: ''
+  PROJECT_NAME: ""
 
 jobs:
   build: # make sure build/ci work properly
@@ -18,12 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set Node.js 18.x
-        uses: actions/setup-node@v3
+      - name: Set Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
 
       - name: Install dependencies
         run: |
@@ -49,12 +49,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set Node.js 18.x
-        uses: actions/setup-node@v3
+      - name: Set Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
 
       - name: Install dependencies
         run: |
@@ -75,28 +75,28 @@ jobs:
         # env:
         #   NODE_ENV: production
 
-      - name: 'get next version name'
+      - name: "get next version name"
         uses: bbonkr/next-version-proposal-action@v1
         id: next_version_proposal
         with:
           github_token: ${{ github.token }}
           pr: ${{ github.event.pull_request.number }}
-          major_labels: 'major,next'
-          minor_labels: 'enhancement,feature'
-          patch_labels: 'bug,documentation,chore,dependencies'
-          next_version_prefix: 'v'
+          major_labels: "major,next"
+          minor_labels: "enhancement,feature"
+          patch_labels: "bug,documentation,chore,dependencies"
+          next_version_prefix: "v"
 
-      - name: 'Create tag'
+      - name: "Create tag"
         uses: rickstaa/action-create-tag@v1
         if: ${{ steps.next_version_proposal.outputs.next_version != '' }}
         with:
-          tag: '${{ steps.next_version_proposal.outputs.next_version }}'
-          message: 'New release ${{ steps.next_version_proposal.outputs.next_version }}'
+          tag: "${{ steps.next_version_proposal.outputs.next_version }}"
+          message: "New release ${{ steps.next_version_proposal.outputs.next_version }}"
           commit_sha: ${{ github.sha }}
 
       - name: create GitHub Release
         id: release_drafter
-        uses: release-drafter/release-drafter@v5
+        uses: release-drafter/release-drafter@v6
         if: ${{ steps.next_version_proposal.outputs.next_version != '' }}
         with:
           config-name: release-drafter.yml
@@ -112,7 +112,7 @@ jobs:
           echo "Next version tag is empty."
 
       - name: Get overview of PR
-        uses: bbonkr/get-overview-of-pull-requests-action@v1.4.0
+        uses: bbonkr/get-overview-of-pull-requests-action@v1
         id: get_overview
         with:
           github_token: ${{ github.token }}

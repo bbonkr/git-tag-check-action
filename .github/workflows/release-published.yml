@@ -11,12 +11,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set Node.js 18.x
-        uses: actions/setup-node@v3
+      - name: Set Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
 
       - name: Install dependencies
         run: |
@@ -52,8 +52,8 @@ jobs:
         uses: rickstaa/action-create-tag@v1
         if: ${{ (steps.git_tag_check.outputs.version != '') && (steps.git_tag_check.outputs.major != '') }}
         with:
-          tag: 'v${{ steps.git_tag_check.outputs.major }}'
-          message: 'Overwrite v${{ steps.git_tag_check.outputs.major }}'
+          tag: "v${{ steps.git_tag_check.outputs.major }}"
+          message: "Overwrite v${{ steps.git_tag_check.outputs.major }}"
           commit_sha: ${{ github.sha }}
           force_push_tag: true
 
@@ -61,7 +61,7 @@ jobs:
         uses: rickstaa/action-create-tag@v1
         if: ${{ (steps.git_tag_check.outputs.version != '') && (steps.git_tag_check.outputs.major != '') && (steps.git_tag_check.outputs.minor != '') }}
         with:
-          tag: 'v${{ steps.git_tag_check.outputs.major }}.${{ steps.git_tag_check.outputs.minor }}'
-          message: 'Overwrite v${{ steps.git_tag_check.outputs.major }}.${{ steps.git_tag_check.outputs.minor }}'
+          tag: "v${{ steps.git_tag_check.outputs.major }}.${{ steps.git_tag_check.outputs.minor }}"
+          message: "Overwrite v${{ steps.git_tag_check.outputs.major }}.${{ steps.git_tag_check.outputs.minor }}"
           commit_sha: ${{ github.sha }}
           force_push_tag: true

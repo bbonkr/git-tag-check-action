@@ -1,21 +1,21 @@
-name: 'Verify PR'
+name: "Verify PR"
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
     branches:
       - main
-      - 'releases/*'
+      - "releases/*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set Node.js 18.x
-        uses: actions/setup-node@v3
+      - name: Set Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
 
       - name: Install dependencies
         run: |
@@ -36,7 +36,7 @@ jobs:
       - uses: ./
         id: git_tag_check
         with:
-          tag: 'v1.0.0'
+          tag: "v1.0.0"
           github_token: ${{ secrets.GH_TOKEN }}
 
       - name: log
